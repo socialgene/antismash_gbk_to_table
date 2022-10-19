@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Union
 
-from antismash_gbk_to_table.a import parse_and_write
+from antismash_gbk_to_table.funcs import parse_and_write
 
 parser = argparse.ArgumentParser(description="Parse antismash GenBank files")
 parser.add_argument(

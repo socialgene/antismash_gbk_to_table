@@ -82,12 +82,18 @@ def parse_and_write(gbk_path_list, outpath, append=False, header=False):
             counter += 1
             parse_gen = SeqIO.parse(gbk_path, "genbank")
             for seq_record in parse_gen:
-                offset = int(
-                    seq_record.annotations["structured_comment"]["antiSMASH-Data"][
-                        "Orig. start"
-                    ]
-                )
 
+                if (
+                    "Orig. start"
+                    in seq_record.annotations["structured_comment"]["antiSMASH-Data"]
+                ):
+                    offset = int(
+                        seq_record.annotations["structured_comment"]["antiSMASH-Data"][
+                            "Orig. start"
+                        ]
+                    )
+                else:
+                    offset = 0
                 extracted_features = (
                     i for i in seq_record.features if i.type in ANTISMASH_TYPES
                 )
