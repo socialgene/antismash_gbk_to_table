@@ -45,7 +45,7 @@ parser.add_argument(
 
 def main():
     args = parser.parse_args()
-    if Path(args.output).exists():
+    if Path(args.output).exists() and not args.append:
         raise FileExistsError(Path(args.output))
     parse_and_write(
         gbk_path_list=args.input,
