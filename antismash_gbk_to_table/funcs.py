@@ -87,11 +87,15 @@ def parse_and_write(gbk_path_list, outpath, append=False, header=False):
                     "Orig. start"
                     in seq_record.annotations["structured_comment"]["antiSMASH-Data"]
                 ):
-                    offset = int(
-                        seq_record.annotations["structured_comment"]["antiSMASH-Data"][
-                            "Orig. start"
-                        ]
-                    )
+                    temp = seq_record.annotations["structured_comment"][
+                        "antiSMASH-Data"
+                    ]["Orig. start"]
+                    # TODO: this is not great but good enough for now
+                    # (account for fuzzy CDS boundaries that cause fuzzy "region" boundaries by... ignoring them)
+                    temp = temp.replace("<", "")
+                    temp = temp.replace(">", "")
+                    # offset from the original sequence
+                    offset = int(temp)
                 else:
                     offset = 0
                 extracted_features = (
