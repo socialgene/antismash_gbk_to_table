@@ -7,6 +7,7 @@ from typing import Dict, List, Union
 import gzip
 from mimetypes import guess_type
 from functools import partial
+import glob
 
 OUT_COLUMNS = [
     "locus",
@@ -73,6 +74,7 @@ def parse_and_write(gbk_path_list, outpath, append=False, header=False):
         write_type = "a"
     else:
         write_type = "w"
+    gbk_path_list = [i for i in glob.glob(gbk_path_list)]
     with open(outpath, write_type) as handle:
         tsv_writer = csv.writer(handle, delimiter="\t")
         if header:

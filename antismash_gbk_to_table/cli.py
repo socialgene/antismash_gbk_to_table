@@ -1,12 +1,6 @@
 #!/usr/bin/env python
-from Bio import SeqIO
-from Bio.SeqFeature import SeqFeature
-from collections import OrderedDict
-import csv
 import argparse
 from pathlib import Path
-from typing import Dict, List, Union
-
 from antismash_gbk_to_table.funcs import parse_and_write
 
 parser = argparse.ArgumentParser(description="Parse antismash GenBank files")
@@ -16,7 +10,6 @@ parser.add_argument(
     metavar="filepath",
     help="Path to GenBank file",
     required=True,
-    nargs="+",
 )
 parser.add_argument(
     "-o",
