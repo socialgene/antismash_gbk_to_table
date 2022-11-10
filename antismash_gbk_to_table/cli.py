@@ -32,6 +32,7 @@ parser.add_argument(
     default=False,
     help="numoutfiles file",
     required=False,
+    action=argparse.BooleanOptionalAction,
 )
 
 parser.add_argument(
@@ -40,6 +41,7 @@ parser.add_argument(
     default=False,
     help="Write column headers?",
     required=False,
+    action=argparse.BooleanOptionalAction,
 )
 
 
