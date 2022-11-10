@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/socialgene/antismash_gbk_to_table/compare/v0.1.1...v0.2.0) (2022-11-10)
+
+
+### Features
+
+* handle gzip input ([398d40f](https://github.com/socialgene/antismash_gbk_to_table/commit/398d40f870a16f0afaed85d1680bb97d9ffa7038))
+
+
+### Bug Fixes
+
+* boolean args ([84b3fe8](https://github.com/socialgene/antismash_gbk_to_table/commit/84b3fe85afe0fe1ef2b2ed653e37dad36642f1de))
+* read gzip ([e2047f0](https://github.com/socialgene/antismash_gbk_to_table/commit/e2047f06a6230fabd8327c02c02781379af35680))
+
 ## [0.1.1](https://github.com/socialgene/antismash_gbk_to_table/compare/v0.1.0...v0.1.1) (2022-11-07)
 
 
