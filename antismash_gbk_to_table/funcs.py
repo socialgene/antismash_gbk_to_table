@@ -3,8 +3,10 @@ from Bio import SeqIO
 from Bio.SeqFeature import SeqFeature
 from collections import OrderedDict
 import csv
-from pathlib import Path
 from typing import Dict, List, Union
+import gzip
+from mimetypes import guess_type
+from functools import partial
 
 OUT_COLUMNS = [
     "locus",
@@ -80,41 +82,44 @@ def parse_and_write(gbk_path_list, outpath, append=False, header=False):
         for gbk_path in gbk_path_list:
             print(f"{counter}/{input_len}", end="\r")
             counter += 1
-            parse_gen = SeqIO.parse(gbk_path, "genbank")
-            for seq_record in parse_gen:
-
-                if (
-                    "Orig. start"
-                    in seq_record.annotations["structured_comment"]["antiSMASH-Data"]
-                ):
-                    temp = seq_record.annotations["structured_comment"][
-                        "antiSMASH-Data"
-                    ]["Orig. start"]
-                    # TODO: this is not great but good enough for now
-                    # (account for fuzzy CDS boundaries that cause fuzzy "region" boundaries by... ignoring them)
-                    temp = temp.replace("<", "")
-                    temp = temp.replace(">", "")
-                    # offset from the original sequence
-                    offset = int(temp)
-                else:
-                    offset = 0
-                extracted_features = (
-                    i for i in seq_record.features if i.type in ANTISMASH_TYPES
-                )
-                extracted_antismash_feature_info = (
-                    {
-                        "type": i.type,
-                        "start": get_seqio_start(i, offset),
-                        "end": get_seqio_end(i, offset),
-                        "strand": i.location.strand,
-                    }
-                    | {
-                        k: unlist(v)
-                        for k, v in i.qualifiers.items()
-                        if k in ANTISMASH_INFO
-                    }
-                    for i in extracted_features
-                )
-                results = (out_dict(i) for i in extracted_antismash_feature_info)
-                for i in results:
-                    tsv_writer.writerow([seq_record.id] + [v for v in i.values()])
+            encoding = guess_type(gbk_path)[1]
+            _open = partial(gzip.open, mode="rt") if encoding == "gzip" else open
+            with _open(gbk_path) as f:
+                for seq_record in SeqIO.parse(f, "fasta"):
+                    if (
+                        "Orig. start"
+                        in seq_record.annotations["structured_comment"][
+                            "antiSMASH-Data"
+                        ]
+                    ):
+                        temp = seq_record.annotations["structured_comment"][
+                            "antiSMASH-Data"
+                        ]["Orig. start"]
+                        # TODO: this is not great but good enough for now
+                        # (account for fuzzy CDS boundaries that cause fuzzy "region" boundaries by... ignoring them)
+                        temp = temp.replace("<", "")
+                        temp = temp.replace(">", "")
+                        # offset from the original sequence
+                        offset = int(temp)
+                    else:
+                        offset = 0
+                    extracted_features = (
+                        i for i in seq_record.features if i.type in ANTISMASH_TYPES
+                    )
+                    extracted_antismash_feature_info = (
+                        {
+                            "type": i.type,
+                            "start": get_seqio_start(i, offset),
+                            "end": get_seqio_end(i, offset),
+                            "strand": i.location.strand,
+                        }
+                        | {
+                            k: unlist(v)
+                            for k, v in i.qualifiers.items()
+                            if k in ANTISMASH_INFO
+                        }
+                        for i in extracted_features
+                    )
+                    results = (out_dict(i) for i in extracted_antismash_feature_info)
+                    for i in results:
+                        tsv_writer.writerow([seq_record.id] + [v for v in i.values()])
