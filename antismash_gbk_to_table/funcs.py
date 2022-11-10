@@ -85,7 +85,7 @@ def parse_and_write(gbk_path_list, outpath, append=False, header=False):
             encoding = guess_type(gbk_path)[1]
             _open = partial(gzip.open, mode="rt") if encoding == "gzip" else open
             with _open(gbk_path) as f:
-                for seq_record in SeqIO.parse(f, "fasta"):
+                for seq_record in SeqIO.parse(f, "genbank"):
                     if (
                         "Orig. start"
                         in seq_record.annotations["structured_comment"][
